@@ -1,4 +1,4 @@
-# Python script for Make automation of Notion database
+# Python script for Make automation of Market into Notion Complaints Database
 
 # ALLO Markets and their UUID (found in Notion)
 markets = {
