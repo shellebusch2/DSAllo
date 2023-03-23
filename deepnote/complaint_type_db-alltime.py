@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 
 api_key = os.environ["NOTION_TOKEN"]
-database_id = os.environ["NOTION_DBID_COMPLAINTS"]
+database_id = 'adee5b7bb826449daf924b1cd1e245dd'
 
 from IPython.display import display, JSON
 
@@ -35,8 +35,9 @@ while response["has_more"]:
 print(f"Got {len(records)} entries from Complaints in Notion.")
 print("Complaints have these properties", [x for x in records[0]['properties']])
 
-# Create Dataframe
 
+
+# Create Dataframe
 def get_raw_value(item):
     item_type = item['type']
 
@@ -44,17 +45,34 @@ def get_raw_value(item):
     if type(item[item_type]) is list:
         # print('is list')
 
-        
-        if item[item_type][0]['type'] == 'text': # Complaint IDs
-            return item[item_type][0]['plain_text']
+        #if item[item_type][0]['type'] == 'text': # Complaint IDs
+            #return item[item_type][0]['plain_text']
+
+        if item_type == 'relation': # Complaint IDs
+            return len(item[item_type])
+
+        if item_type == 'title': # complaint type
+            return len(item[item_type])
+
                 
     if type(item[item_type]) is dict:
         # print('is dict')
-        if item_type == 'select': # City
-            return item[item_type].get('name')            
+        #if item_type == 'select': # City
+            #return item[item_type].get('name')            
 
     # print(type(item[item_type]))
-    return item[item_type]
+        return item[item_type]
+
+# def get_raw_val_relation(item):
+#     item_type = item['type']
+
+#     print(item['id'])
+
+#     # if item[item_type] == 'relation':
+#     #     print('relation')
+    
+#     return
+
 
 
 all_values = []   
@@ -62,10 +80,11 @@ for record in records:
     properties = record['properties']
     all_values.append({
         # 'COLUMN NAME' : get_raw_value(properties[PROPERTY_NAME]),
-        'Complaint ID' : get_raw_value(properties['Complaint ID']),
-        'City': get_raw_value(properties['City']),
-        'State': get_raw_value(properties['State']),
-        'First Name': get_raw_value(properties['First Name'])
+        # Complaint Type
+
+        'Complaint Type': get_raw_value(properties['Complaints']),
+        # Complaints
+        'Complaints': get_raw_value(properties['Complaints'])
     })
 
 df = pd.DataFrame(all_values)
